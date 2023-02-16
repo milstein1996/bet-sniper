@@ -12,10 +12,11 @@ class Sheet:
         self.sheet_name = sheet_name
         self.worksheet_name = worksheet_name
         self.sheet = self.get_sheet()
-        self.scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets",
-                      "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
 
     def get_sheet(self):
+        scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets",
+                 "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+
         # Get the path to the credentials file
         creds_path = os.path.join(os.getcwd(), 'config', 'credentials.json')
 
@@ -24,7 +25,7 @@ class Sheet:
             creds_path = os.environ['GCP_SERVICE_ACCOUNT']
 
         creds = ServiceAccountCredentials.from_json_keyfile_name(
-            creds_path, self.scope)
+            creds_path, scope)
         client = gspread.authorize(creds)
 
         try:
