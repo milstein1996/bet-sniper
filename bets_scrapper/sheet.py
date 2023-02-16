@@ -4,6 +4,7 @@ from gspread_dataframe import set_with_dataframe
 from gspread_formatting import *
 import pandas as pd
 import gspread
+import os
 
 
 class Sheet:
@@ -11,14 +12,19 @@ class Sheet:
         self.sheet_name = sheet_name
         self.worksheet_name = worksheet_name
         self.sheet = self.get_sheet()
+        self.scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets",
+                      "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
 
     def get_sheet(self):
-        # use creds to create a client to interact with the Google Drive API
-        # Scope: is the level of access you are requesting. Full, readonly, etc.
-        scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets",
-                 "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+        # Get the path to the credentials file
+        creds_path = os.path.join(os.getcwd(), 'config', 'credentials.json')
+
+        # Check if the GOOGLE_APPLICATION_CREDENTIALS environment variable is set
+        if 'GCP_SERVICE_ACCOUNT' in os.environ:
+            creds_path = os.environ['GCP_SERVICE_ACCOUNT']
+
         creds = ServiceAccountCredentials.from_json_keyfile_name(
-            "config/credentials.json", scope)
+            creds_path, self.scope)
         client = gspread.authorize(creds)
 
         try:
