@@ -2,7 +2,7 @@ name: Update Google Sheet
 
 on:
   schedule:
-    - cron: "*/30 * * * *" # Run every 30 minutes
+    - cron: "*/2 * * * *" # Run every 2 minutes
 
 jobs:
   update_sheet:
