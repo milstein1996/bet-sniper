@@ -8,7 +8,6 @@ jobs:
   update_sheet:
     runs-on: ubuntu-latest
     env:
-      SPREADSHEET_NAME: <spreadsheet_name>
       GCP_SERVICE_ACCOUNT: ${{ secrets.GCP_SERVICE_ACCOUNT }}
     steps:
       - name: Checkout code
@@ -25,4 +24,4 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run web scraping script
-        run: python main.py
+        run: python bets_scrapper/main.py
