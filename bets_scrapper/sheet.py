@@ -1,5 +1,5 @@
 from gspread.exceptions import SpreadsheetNotFound
-from oauth2client.service_account import ServiceAccountCredentials
+from google.oauth2.service_account import Credentials
 from gspread_dataframe import set_with_dataframe
 from gspread_formatting import *
 import pandas as pd
@@ -17,15 +17,18 @@ class Sheet:
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets",
                  "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
 
-        # Get the path to the credentials file
-        creds_path = os.path.join(os.getcwd(), 'config', 'credentials.json')
+        # Get the GCP_SERVICE_ACCOUNT_INFO from the environment variable
+        GCP_SERVICE_ACCOUNT_INFO = os.environ.get('GCP_SERVICE_ACCOUNT')
 
-        # Check if the GOOGLE_APPLICATION_CREDENTIALS environment variable is set
-        if 'GCP_SERVICE_ACCOUNT' in os.environ:
-            creds_path = os.environ['GCP_SERVICE_ACCOUNT']
+        # If the environment variable is not set, return None
+        if GCP_SERVICE_ACCOUNT_INFO is None:
+            print("GCP_SERVICE_ACCOUNT is not set")
+            raise Exception("GCP_SERVICE_ACCOUNT is not set")
 
-        creds = ServiceAccountCredentials.from_json_keyfile_name(
-            creds_path, scope)
+        #
+        creds = Credentials.from_service_account_info(
+            GCP_SERVICE_ACCOUNT_INFO, scope)
+
         client = gspread.authorize(creds)
 
         try:
@@ -51,11 +54,16 @@ class Sheet:
         return worksheet
 
     def update_sheet(self, data: pd.DataFrame):
-        # Get the worksheet
-        worksheet = self.get_worksheet(data)
 
-        # Clear the existing data in the sheet
-        worksheet.clear()
+        try:
+            # Get the worksheet
+            worksheet = self.get_worksheet(data)
 
-        # Update the sheet with the new data
-        set_with_dataframe(worksheet, data)
+            # Clear the existing data in the sheet
+            worksheet.clear()
+
+            # Update the sheet with the new data
+            set_with_dataframe(worksheet, data)
+        except Exception as e:
+            print("Something went wrong. Please try again.")
+            raise e
