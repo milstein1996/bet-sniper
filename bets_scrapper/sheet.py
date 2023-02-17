@@ -27,7 +27,7 @@ class Sheet:
 
         #
         creds = Credentials.from_service_account_info(
-            GCP_SERVICE_ACCOUNT_INFO, scope)
+            GCP_SERVICE_ACCOUNT_INFO, scopes=scope)
 
         client = gspread.authorize(creds)
 
