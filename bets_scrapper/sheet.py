@@ -5,6 +5,7 @@ from gspread_formatting import *
 import pandas as pd
 import gspread
 import os
+import json
 
 
 class Sheet:
@@ -27,7 +28,7 @@ class Sheet:
 
         #
         creds = Credentials.from_service_account_info(
-            GCP_SERVICE_ACCOUNT_INFO, scopes=scope)
+            json.loads(GCP_SERVICE_ACCOUNT_INFO), scopes=scope)
 
         client = gspread.authorize(creds)
 
