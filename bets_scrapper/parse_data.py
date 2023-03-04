@@ -1,6 +1,7 @@
 import pandas as pd
 from scraper import scrap_data
 import datetime
+import logging
 
 
 def get_data():
@@ -24,9 +25,10 @@ def get_data():
 
 
 def get_parsed_data():
-    data = get_data()
-    df = pd.DataFrame(data)
-    return df
-
-
-get_parsed_data()
+    try:
+        data = get_data()
+        df = pd.DataFrame(data)
+        return df
+    except Exception as error:
+        logging.error(f"Error occurred while parsing data: {error}")
+        return None

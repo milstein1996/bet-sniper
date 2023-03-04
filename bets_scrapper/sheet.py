@@ -6,6 +6,7 @@ import pandas as pd
 import gspread
 import os
 import json
+import logging
 
 
 class Sheet:
@@ -23,8 +24,8 @@ class Sheet:
 
         # If the environment variable is not set, return None
         if GCP_SERVICE_ACCOUNT_INFO is None:
-            print("GCP_SERVICE_ACCOUNT is not set")
-            raise Exception("GCP_SERVICE_ACCOUNT is not set")
+            logging.error("GCP_SERVICE_ACCOUNT is not set")
+            return None
 
         #
         creds = Credentials.from_service_account_info(
@@ -35,23 +36,23 @@ class Sheet:
         try:
             spread_sheet = client.open(self.sheet_name)
         except SpreadsheetNotFound:
-            # create a new sheet with the given name
-            spread_sheet = client.create(self.sheet_name)
-            print(
-                f"Spreadsheet '{self.sheet_name}' not found. Created a spreadsheet with the same name.")
-        except Exception as e:
-            print(e)
-            print("Something went wrong. Please try again.")
+            logging.error(
+                f"Spreadsheet '{self.sheet_name}' not found!")
+            raise None
+
+        except Exception as error:
+            logging.error(f"Something went wrong. Please try again: {error}")
             return None
+
         return spread_sheet
 
     def get_worksheet(self, data):
         try:
             # get the worksheet with the given name
             worksheet = self.sheet.worksheet(self.worksheet_name)
-        except Exception as e:
-            print("Something went wrong. Please try again.")
-            raise e
+        except Exception as error:
+            logging.error(f"Something went wrong. Please try again: {error}")
+            return None
         return worksheet
 
     def update_sheet(self, data: pd.DataFrame):
@@ -65,6 +66,6 @@ class Sheet:
 
             # Update the sheet with the new data
             set_with_dataframe(worksheet, data)
-        except Exception as e:
-            print("Something went wrong. Please try again.")
-            raise e
+        except Exception as error:
+            logging.error("Something went wrong. Please try again: {error}")
+            raise error
