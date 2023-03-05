@@ -20,7 +20,7 @@ def job():
         logging.info("I'm done...")
     except Exception as error:
         logging.error(f"Error occurred while updating sheet: {error}")
-        raise e
+        raise error
 
 
 if __name__ == "__main__":
